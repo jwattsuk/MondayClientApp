@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bags of Taste</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Delivery Schedule</h1>
+        <table class="participants-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Area</th>
+                    <th>Postcode/Address</th>
+                    <th>Do you have diabetes (any type)?</th>
+                    <th>Delivery instructions</th>
+                    <th>Bag delivery date</th>
+                    <th>Deliverer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                <tr>
+                    <td data-label="Name">{{ participant.name }}</td>
+                    <td data-label="Area">{{ participant.area }}</td>
+                    <td data-label="Postcode/Address">{{ participant.address }}</td>
+                    <td data-label="Diabetes">{{ participant.diabetes }}</td>
+                    <td data-label="Delivery instructions">{{ participant.instructions }}</td>
+                    <td data-label="Bag delivery date">{{ participant.delivery_date }}</td>
+                    <td data-label="Deliverer">{{ participant.deliverer }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
