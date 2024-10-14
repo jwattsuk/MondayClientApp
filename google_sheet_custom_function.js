@@ -41,14 +41,11 @@ function onOpen() {
       });
       
       sheet.appendRow(row);
-    });
-  
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    });    
     
-    // Format the response
+    // Format the table
     var dataRange = sheet.getRange("A1:G17");
     var headerRange = sheet.getRange("A1:G1");
-  
     dataRange.setBorder(true, true, true, true, true, true);
     headerRange.setFontWeight("bold");
     headerRange.setBackground("#b6d7a8");
