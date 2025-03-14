@@ -36,12 +36,122 @@ query2 = """
 }
 """
 
-columns_query = '{boards(ids: 1642180441) { name id description items_page { items { name column_values { id value } } } } }'
+columns_query = '{boards(ids: 1521055645) { name id description items_page { items { name column_values { id value } } } } }'
+
+boards_query = """ {
+  boards {
+    id
+    name
+    state
+  }
+}"""
+
+participant_board_all_cols = """
+{
+    boards(ids: 1705846327) { 
+        name id description items_page { 
+            items { 
+                name column_values { 
+                    id column { 
+                        title 
+                    } 
+                    text
+                }
+            } 
+        } 
+    } 
+}
+"""
+
+query3 = "{ boards(ids: 1705846327) { name id description items_page { items { name column_values { id column { title } text } } } } }"
+
+# single_select__1 == Area
+# status__1 == Participant Stage
+# date01__1 == Bag Delivery (date)
+participant_board_all_cols_filter = """
+query {
+  items_page_by_column_values(
+    limit: 500,
+    board_id: 1521055645,
+    columns: [
+      {
+        column_id: "single_select__1",
+        column_values: ["Hackney"]
+      },
+      {
+        column_id: "status__1",
+        column_values: ["Registration", "Start data and assessment", "Mentor group and bag delivery", "Course in progress"]
+      },
+      {
+        column_id: "date0__1",
+        column_values: [""]
+      }      
+    ]
+  ) {
+    items { 
+                name column_values { 
+                    id column { 
+                        title 
+                    } 
+                    text 
+                }
+            }
+  }
+}
+"""
+
+delivery_report = """
+{boards(ids: 1705846327) 
+    { name id description items_page  ( query_params: 
+        {rules: [{column_id: \"status__1\", compare_value: [8]} 
+            {column_id: \"status_17__1\", compare_value: 13}], operator: and}) 
+                { cursor  items 
+                    { name column_values 
+                        { column { title } text  }  
+                        linked_items_deliverer: column_values(ids: \"board_relation__1\") {   value   }    
+                        linked_items_course: column_values(ids: \"link_to_courses__1\") {   value   }     
+                        linked_items_mentor: column_values(ids: \"link_to_volunteers__1\") {   value    }         } } } }
+"""
+
+delivery_report2 = """
+{boards(ids: 1705846327) 
+    { name id description items_page  
+                { cursor  items 
+                    { name column_values 
+                        { column { title } text  }  
+                        linked_items_deliverer: column_values(ids: \"board_relation__1\") {   value   }    
+                        linked_items_course: column_values(ids: \"link_to_courses__1\") {   value   }     
+                        linked_items_mentor: column_values(ids: \"link_to_volunteers__1\") {   value    }         } } } }
+"""
+
+query_with_values = """
+{
+  boards(ids: 1705846327) {
+    name
+    id
+    description
+    items_page  {
+      items {
+        name
+        column_values {
+          column {
+            title
+          }
+          id
+          value
+          text
+        }
+      }
+    }
+  }
+}
+"""
 
 def get_board_data():
     """Fetch data from Monday.com board using GraphQL query."""
     data = {
-        'query': query2
+        #'query': query2
+        'query': delivery_report2
     }
 
     response = requests.post(API_URL, headers=headers, json=data)
@@ -92,8 +202,10 @@ def print_table(data):
 if __name__ == "__main__":
     try:
         board_data = get_board_data()
-        print(json.dumps(board_data, indent=4))
+        #print(json.dumps(board_data, indent=4))
+        with open('data.json', 'w', encoding='utf-8') as f:
+            json.dump(board_data, f, ensure_ascii=False, indent=4)
         #data_dict = json.loads(board_data)
-        print_table(board_data)
+        #print_table(board_data)
     except Exception as e:
         print(f"Error: {e}")
